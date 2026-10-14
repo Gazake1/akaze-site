@@ -464,12 +464,12 @@
 <script>
 (function(){
   /* ---------- release info (fallback values; refreshed from the GitHub API) ---------- */
-  var fb = { ver:"1.0.3", date:"2026-10-14T22:28:36Z", size:"1.4 MB", normal:"3629e629e9132ecc85aee2ae605dc5d73f5bcbb6e3b7b4cd6ae64ece696926ea", admin:"b32f0ecbc87c8cf4a34e37e6117dd906224047d7467b7087c288f679cf34f779" };
+  var fb = { ver:"1.0.4", date:"2026-10-14T23:29:13Z", size:"1.4 MB", normal:"53d0674ee7c957659c81ce1f4807300dd4ef7c46e1327ff5e929f5f6b9d8f04d", admin:"9c2546f1c564bf922f0afd3991cfff9e9ec2502da5ba27c45144649ef5ff7947" };
   function setAll(sel,v){ document.querySelectorAll(sel).forEach(function(e){ e.textContent=v; }); }
   function setId(id,v){ var e=document.getElementById(id); if(e) e.textContent=v; }
   var lang = "en";
   function fmtDate(iso){ try{ return new Date(iso).toLocaleDateString(lang==="pt"?"pt-BR":"en-US",{year:"numeric",month:"short",day:"numeric"}); }catch(e){ return iso; } }
-  var rel = { iso: "2026-10-14T22:28:36Z" };
+  var rel = { iso: "2026-10-14T23:29:13Z" };
   function paintRelease(){
     setAll(".v-ver", fb.ver); setAll(".v-size", fb.size);
     setAll(".v-date", rel.iso ? fmtDate(rel.iso) : fb.date);
