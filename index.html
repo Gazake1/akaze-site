@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GNClicker — The clean autoclicker for Minecraft</title>
+<meta name="description" content="GNClicker is a small, fast autoclicker for Minecraft on Windows, made in Brazil. Blockhit, jitter, throwpot, W-tap and click sounds. No network, no persistence, no trace wiping.">
+<meta name="theme-color" content="#060607">
+<meta property="og:title" content="GNClicker — The clean autoclicker for Minecraft">
+<meta property="og:description" content="Small, fast and transparent. Made in Brazil. Free download for Windows 10/11.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://gazake1.github.io/gnclicker-site/img/ui-clicker-en.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="logo.png">
+<style>
+  :root{
+    --bg:#060607; --bg2:#0b0b0e; --card:#111114; --card2:#151519; --line:rgba(255,255,255,.08);
+    --text:#f3f3f6; --muted:#9b9ba7; --a1:#ff3b4e; --a2:#b3122a; --a3:#ff7a85;
+    --ok:#46d08a; --warn:#ffb454; --br-g:#009c3b; --br-y:#ffdf00; --br-b:#002776; --radius:18px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;scroll-padding-top:76px}
+  body{
+    background:
+      radial-gradient(1000px 560px at 12% -8%,rgba(255,59,78,.20),transparent 60%),
+      radial-gradient(900px 560px at 100% 4%,rgba(179,18,42,.17),transparent 55%),
+      radial-gradient(700px 400px at 50% 100%,rgba(255,59,78,.06),transparent 60%),var(--bg);
+    background-attachment:fixed;color:var(--text);
+    font:16px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+  }
+  a{color:inherit}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 22px}
+  svg{display:block}
+
+  /* ---------- nav ---------- */
+  header.top{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    background:rgba(7,8,13,.72);border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:64px;gap:14px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.2px;text-decoration:none}
+  .brand img{width:38px;height:38px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(255,59,78,.5))}
+  .herologo{display:block;width:96px;height:96px;object-fit:contain;margin:0 0 14px -6px;filter:drop-shadow(0 0 30px rgba(255,59,78,.6))}
+  .links{display:flex;gap:22px;font-size:14px;color:var(--muted)}
+  .links a{text-decoration:none;transition:.15s}
+  .links a:hover{color:var(--text)}
+  .right{display:flex;align-items:center;gap:12px}
+
+  /* language switch (bandeira) */
+  .lang{display:flex;padding:3px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.04)}
+  .lang button{display:flex;align-items:center;gap:7px;border:0;background:transparent;color:var(--muted);
+    padding:5px 11px 5px 7px;border-radius:999px;font:600 12.5px/1 system-ui,sans-serif;cursor:pointer;transition:.15s}
+  .lang button svg{width:22px;height:15px;border-radius:3px;box-shadow:0 0 0 1px rgba(255,255,255,.18)}
+  .lang button:hover{color:var(--text)}
+  .lang button[aria-pressed="true"]{background:linear-gradient(135deg,rgba(255,59,78,.35),rgba(179,18,42,.35));color:#fff;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
+  .lang button:focus-visible,.btn:focus-visible,.tabs button:focus-visible,.copy:focus-visible,summary:focus-visible{outline:2px solid var(--a3);outline-offset:2px}
+
+  /* ---------- hero ---------- */
+  .hero{display:grid;grid-template-columns:.95fr 1.05fr;gap:40px;align-items:center;padding:64px 0 36px}
+  .badge{display:inline-flex;align-items:center;gap:10px;padding:6px 14px 6px 8px;border-radius:999px;border:1px solid rgba(0,156,59,.45);
+    background:linear-gradient(90deg,rgba(0,156,59,.16),rgba(255,223,0,.08));font-size:13px;font-weight:600;margin-bottom:20px}
+  .badge svg{width:26px;height:18px;border-radius:3px;box-shadow:0 0 0 1px rgba(255,255,255,.2)}
+  h1{font-size:clamp(36px,5.6vw,60px);line-height:1.05;letter-spacing:-1.4px;margin-bottom:18px}
+  h1 span{background:linear-gradient(90deg,var(--a3),var(--a1) 45%,var(--a2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--muted);font-size:18px;max-width:540px;margin-bottom:28px}
+  .cta{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+  .btn{display:inline-flex;align-items:center;gap:11px;padding:14px 22px;border-radius:13px;font-weight:700;text-decoration:none;
+    border:1px solid var(--line);background:var(--card);transition:.18s;cursor:pointer;font-size:16px;color:var(--text)}
+  .btn:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.22)}
+  .btn.primary{background:linear-gradient(135deg,var(--a1),var(--a2));border:0;box-shadow:0 12px 34px rgba(255,59,78,.38)}
+  .btn.primary:hover{box-shadow:0 16px 42px rgba(255,59,78,.5)}
+  .btn small{display:block;font-weight:500;font-size:12px;opacity:.82}
+  .btn svg{width:21px;height:21px;flex:none}
+  .pills{display:flex;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:13px}
+  .pill{padding:4px 12px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.03)}
+  .pill b{color:var(--text);font-weight:600}
+
+  /* app window mock */
+  .win{border-radius:12px;overflow:hidden;background:#000;border:1px solid rgba(255,255,255,.14);
+    box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.04),0 0 90px rgba(255,59,78,.25)}
+  .win img.shot{display:block;width:100%;height:auto}
+  .hero .win{transform:perspective(1200px) rotateY(-7deg) rotateX(3deg);transition:transform .5s;max-width:540px;margin-left:auto}
+  .hero .win:hover{transform:perspective(1200px) rotateY(0) rotateX(0)}
+
+  /* ---------- sections ---------- */
+  section{padding:58px 0}
+  .eyebrow{font-size:12.5px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;color:var(--a3);margin-bottom:8px}
+  h2{font-size:clamp(26px,3.6vw,36px);letter-spacing:-.7px;line-height:1.15;margin-bottom:10px}
+  .lead{color:var(--muted);max-width:660px;margin-bottom:30px;font-size:17px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;transition:.2s}
+  .card:hover{border-color:rgba(255,255,255,.18);transform:translateY(-3px)}
+  .card .ico{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;margin-bottom:14px;
+    background:linear-gradient(135deg,rgba(255,59,78,.22),rgba(179,18,42,.22));border:1px solid rgba(255,255,255,.08)}
+  .card .ico svg{width:22px;height:22px;stroke:#ffc2c7;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .card h3{font-size:16.5px;margin-bottom:6px}
+  .card p{color:var(--muted);font-size:14.5px}
+  .tag{display:inline-block;white-space:nowrap;font-size:11px;padding:2px 8px;border-radius:999px;background:rgba(255,59,78,.16);color:#ffb3ba;font-weight:700;margin-left:6px;vertical-align:2px}
+
+  .strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;padding:6px 0 10px}
+  .strip div{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.025);font-size:14px;font-weight:600}
+  .strip svg{width:22px;height:22px;flex:none;stroke:var(--ok);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+  .two p{color:var(--muted);margin-bottom:14px;font-size:16.5px}
+  .two p b{color:var(--text)}
+  .quote{border-left:3px solid var(--a1);padding:6px 0 6px 18px;font-size:19px;line-height:1.5;color:#dfe4f5;font-weight:500}
+
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;counter-reset:s}
+  .step{position:relative;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px 20px 20px}
+  .step::before{counter-increment:s;content:counter(s);display:grid;place-items:center;width:32px;height:32px;border-radius:10px;font-weight:800;margin-bottom:12px;
+    background:linear-gradient(135deg,var(--a1),var(--a2))}
+  .step h3{font-size:16.5px;margin-bottom:6px}
+  .step p{color:var(--muted);font-size:14.5px}
+  .step code,.card code,details code{font:12.5px ui-monospace,Consolas,monospace;background:rgba(255,255,255,.07);padding:1px 6px;border-radius:6px;color:#d4dcff}
+
+  /* screenshots viewer */
+  .viewer{display:grid;grid-template-columns:230px 1fr;gap:28px;align-items:start}
+  .tabs{display:flex;flex-direction:column;gap:10px}
+  .tabs button{text-align:left;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:14px;padding:14px 16px;cursor:pointer;transition:.18s;font:inherit}
+  .tabs button b{display:block;font-size:15px;margin-bottom:2px}
+  .tabs button span{display:block;color:var(--muted);font-size:13px;line-height:1.4}
+  .tabs button[aria-selected="true"]{border-color:rgba(255,122,133,.55);background:linear-gradient(135deg,rgba(255,59,78,.18),rgba(179,18,42,.14))}
+  .stage{display:flex;justify-content:center;padding:26px;border-radius:var(--radius);border:1px solid var(--line);
+    background:radial-gradient(500px 300px at 50% 0%,rgba(255,59,78,.18),transparent 70%),var(--bg2)}
+  .stage .win{width:min(100%,640px)}
+  .stage img.shot{transition:opacity .25s}
+  .note-sm{color:var(--muted);font-size:13px;margin-top:12px;text-align:center}
+
+  /* made in brazil */
+  .br{position:relative;overflow:hidden;border-radius:26px;border:1px solid rgba(255,59,78,.40);padding:40px;
+    background:linear-gradient(135deg,rgba(255,59,78,.16),rgba(20,20,24,.65) 55%,rgba(179,18,42,.22))}
+  .br::after{content:"";position:absolute;right:-70px;top:-70px;width:280px;height:280px;border-radius:50%;
+    background:radial-gradient(circle,rgba(255,59,78,.24),transparent 65%);pointer-events:none}
+  .br .flagbig{width:92px;height:64px;border-radius:9px;box-shadow:0 10px 30px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.25);margin-bottom:18px}
+  .br h2{font-size:clamp(28px,4vw,40px)}
+  .br p{color:#d9d3d4;max-width:680px;font-size:17px;margin-bottom:12px;position:relative;z-index:1}
+  .br p b{color:#fff}
+  .br .sig{margin-top:18px;display:flex;align-items:center;gap:12px;position:relative;z-index:1;font-weight:700}
+  .br .sig img{width:40px;height:40px;border-radius:11px}
+  .br .sig small{display:block;font-weight:500;color:#c7bfc1;font-size:13px}
+
+  .trust{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .list{list-style:none}
+  .list li{padding:8px 0 8px 30px;position:relative;color:var(--muted);font-size:15px}
+  .list li b{color:var(--text)}
+  .list.no li::before{content:"✕";position:absolute;left:0;color:var(--ok);font-weight:900}
+  .list.yes li::before{content:"✓";position:absolute;left:0;color:var(--a3);font-weight:900}
+
+  /* download */
+  .dl-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .dl{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px;display:flex;flex-direction:column;gap:12px}
+  .dl.main{border-color:rgba(255,122,133,.45);background:linear-gradient(160deg,rgba(255,59,78,.16),var(--card) 55%)}
+  .dl h3{font-size:19px}
+  .dl p{color:var(--muted);font-size:14.5px;flex:1}
+  .dl .btn{justify-content:center}
+  .hash{display:flex;gap:8px;align-items:center;background:var(--bg2);border:1px solid var(--line);border-radius:11px;padding:9px 11px}
+  .hash code{font:11.5px ui-monospace,Consolas,monospace;color:#c3c9de;word-break:break-all;flex:1}
+  .copy{font-size:12px;padding:5px 10px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--text);cursor:pointer}
+  .copy:hover{background:rgba(255,255,255,.07)}
+  .install{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:16px;counter-reset:s}
+  .install .step{padding:18px}
+  .note{border:1px solid rgba(255,180,84,.35);background:rgba(255,180,84,.07);border-radius:var(--radius);padding:16px 20px;color:#ead6b4;font-size:14.5px;margin-top:18px}
+  .note b{color:var(--warn)}
+
+  details{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 20px;margin-bottom:10px}
+  summary{cursor:pointer;font-weight:700}
+  details p{color:var(--muted);margin-top:10px;font-size:15px}
+  details p b{color:var(--text)}
+
+  footer{border-top:1px solid var(--line);padding:34px 0 46px;color:var(--muted);font-size:13.5px}
+  .foot{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+  .foot .mib{display:flex;align-items:center;gap:10px;color:var(--text);font-weight:600}
+  .foot .mib svg{width:26px;height:18px;border-radius:3px;box-shadow:0 0 0 1px rgba(255,255,255,.2)}
+  footer a{color:var(--text)}
+
+  /* reveal */
+  .rv{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+  .rv.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}.card:hover,.btn:hover{transform:none}html{scroll-behavior:auto}.hero .win{transform:none}}
+
+  @media(max-width:880px){
+    .hero{grid-template-columns:1fr;padding-top:40px}
+    .hero .win{margin:6px auto 0;transform:none;max-width:340px}
+    .links{display:none}
+    .two,.trust,.dl-grid{grid-template-columns:1fr}
+    .viewer{grid-template-columns:1fr}
+    .tabs{flex-direction:row;overflow-x:auto;padding-bottom:4px}
+    .tabs button{min-width:170px}
+    .br{padding:28px 22px}
+  }
+</style>
+</head>
+<body>
+
+<!-- flag sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="flag-br" viewBox="0 0 28 20">
+    <rect width="28" height="20" fill="#009c3b"/>
+    <polygon points="14,2.1 25.4,10 14,17.9 2.6,10" fill="#ffdf00"/>
+    <circle cx="14" cy="10" r="4.7" fill="#002776"/>
+    <path d="M9.5 9.1c3.1-.95 6.3-.55 9 1.35" fill="none" stroke="#fff" stroke-width="1"/>
+  </symbol>
+  <symbol id="flag-us" viewBox="0 0 28 20">
+    <rect width="28" height="20" fill="#fff"/>
+    <g fill="#b22234"><rect y="0" width="28" height="1.54"/><rect y="3.08" width="28" height="1.54"/><rect y="6.15" width="28" height="1.54"/><rect y="9.23" width="28" height="1.54"/><rect y="12.3" width="28" height="1.54"/><rect y="15.4" width="28" height="1.54"/><rect y="18.46" width="28" height="1.54"/></g>
+    <rect width="12" height="10.77" fill="#3c3b6e"/>
+    <g fill="#fff"><circle cx="2" cy="1.8" r=".6"/><circle cx="4.6" cy="1.8" r=".6"/><circle cx="7.2" cy="1.8" r=".6"/><circle cx="9.8" cy="1.8" r=".6"/><circle cx="3.3" cy="4" r=".6"/><circle cx="5.9" cy="4" r=".6"/><circle cx="8.5" cy="4" r=".6"/><circle cx="2" cy="6.2" r=".6"/><circle cx="4.6" cy="6.2" r=".6"/><circle cx="7.2" cy="6.2" r=".6"/><circle cx="9.8" cy="6.2" r=".6"/><circle cx="3.3" cy="8.4" r=".6"/><circle cx="5.9" cy="8.4" r=".6"/><circle cx="8.5" cy="8.4" r=".6"/></g>
+  </symbol>
+</svg>
+
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="#top"><img src="logo.png" alt="GNClicker logo"> GNClicker</a>
+    <nav class="links" aria-label="Sections">
+      <a href="#how" data-i18n="nav.how">How it works</a>
+      <a href="#features" data-i18n="nav.features">Features</a>
+      <a href="#screens" data-i18n="nav.screens">Screenshots</a>
+      <a href="#brazil" data-i18n="nav.brazil">About</a>
+      <a href="#download" data-i18n="nav.download">Download</a>
+      <a href="#faq" data-i18n="nav.faq">FAQ</a>
+    </nav>
+    <div class="right">
+      <div class="lang" role="group" aria-label="Language / Idioma">
+        <button type="button" data-lang="en" aria-pressed="true" title="English"><svg><use href="#flag-us"/></svg>EN</button>
+        <button type="button" data-lang="pt" aria-pressed="false" title="Português (Brasil)"><svg><use href="#flag-br"/></svg>PT</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+<div class="wrap">
+
+  <!-- ================= HERO ================= -->
+  <div class="hero">
+    <div>
+      <img class="herologo" src="logo.png" alt="GNClicker logo">
+      <div class="badge"><svg><use href="#flag-br"/></svg><span data-i18n="hero.badge">Made in Brazil · built by a Brazilian developer</span></div>
+      <h1><span data-i18n="hero.h1a">The clean autoclicker</span><br><span data-i18n="hero.h1b" style="background:none;-webkit-text-fill-color:var(--text);color:var(--text)">for Minecraft.</span></h1>
+      <p class="sub" data-i18n="hero.sub">GNClicker clicks for you at the speed you choose, with blockhit, jitter, throwpot and W-tap built in. Small, fast and nothing hidden: no network, no persistence, no trace wiping.</p>
+      <div class="cta">
+        <a class="btn primary" id="dl-normal" href="https://github.com/Gazake1/GNClicker/releases/latest/download/GNClicker.exe" download>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 21h16"/></svg>
+          <span><span data-i18n="hero.dl">Download for Windows</span><small data-i18n="hero.dlsub">Free · single .exe · no installer</small></span>
+        </a>
+        <a class="btn" href="#how"><span data-i18n="hero.how">See how it works</span></a>
+      </div>
+      <div class="pills">
+        <span class="pill"><span data-i18n="pill.ver">Version</span> <b class="v-ver">1.0.1</b></span>
+        <span class="pill"><b class="v-size">1,3 MB</b></span>
+        <span class="pill"><span data-i18n="pill.upd">Updated</span> <b class="v-date">—</b></span>
+        <span class="pill">Windows 10 / 11</span>
+        <a class="pill" href="https://github.com/Gazake1/GNClicker" rel="noopener" style="text-decoration:none" data-i18n="pill.os">Open source · MIT</a>
+      </div>
+    </div>
+    <div class="win rv" aria-label="GNClicker main window">
+      <img class="shot" id="hero-shot" data-shot="clicker" src="img/ui-clicker-en.png" alt="GNClicker main window with the red and black interface">
+    </div>
+  </div>
+
+  <!-- trust strip -->
+  <div class="strip rv">
+    <div><svg viewBox="0 0 24 24"><path d="M5 12.5 10 17l9-10"/></svg><span data-i18n="strip.1">No network access</span></div>
+    <div><svg viewBox="0 0 24 24"><path d="M5 12.5 10 17l9-10"/></svg><span data-i18n="strip.2">No persistence on your PC</span></div>
+    <div><svg viewBox="0 0 24 24"><path d="M5 12.5 10 17l9-10"/></svg><span data-i18n="strip.3">No trace wiping, no self-delete</span></div>
+    <div><svg viewBox="0 0 24 24"><path d="M5 12.5 10 17l9-10"/></svg><span data-i18n="strip.4">One small .exe, SHA-256 published</span></div>
+  </div>
+
+  <!-- ================= WHAT IS IT ================= -->
+  <section id="what">
+    <div class="two">
+      <div class="rv">
+        <div class="eyebrow" data-i18n="what.eyebrow">What is it?</div>
+        <h2 data-i18n="what.h2">An autoclicker that does exactly what it says.</h2>
+        <p data-i18n="what.p1">GNClicker is a small Windows program that presses your mouse button for you, over and over, at a speed you choose: from <b>1 to 100 clicks per second</b> (CPS). Arm it with a hotkey, hold the mouse button, and it clicks for as long as you hold.</p>
+        <p data-i18n="what.p2">It was designed with <b>Minecraft</b> in mind: it understands the hotbar, blocking with a sword, throwing potions and resetting your sprint. But at its core it is a clean, configurable autoclicker that works in any window.</p>
+      </div>
+      <div class="rv">
+        <div class="quote" data-i18n="what.quote">“I wanted an autoclicker I could actually trust, so I built one where nothing is hidden: it clicks, it plays a sound, and that’s it.”</div>
+        <p class="note-sm" style="text-align:left;margin-top:14px" data-i18n="what.by">— Gazake, the developer</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= HOW IT WORKS ================= -->
+  <section id="how">
+    <div class="eyebrow" data-i18n="how.eyebrow">How it works</div>
+    <h2 data-i18n="how.h2">Four steps, then you just play.</h2>
+    <p class="lead" data-i18n="how.lead">There is nothing to install and nothing to set up beyond picking a key and a speed.</p>
+    <div class="steps">
+      <div class="step rv"><h3 data-i18n="how.s1h">Arm it</h3><p data-i18n="how.s1p">Press your hotkey (default <code>R</code>) to arm each side. The status flips from <b>DISABLED</b> to <b>ARMED</b>. Left and right have their own key and CPS.</p></div>
+      <div class="step rv"><h3 data-i18n="how.s2h">Hold the button</h3><p data-i18n="how.s2p">Hold the mouse button you want to click with. GNClicker reads the <b>physical</b> state of your buttons, so its own clicks never confuse it.</p></div>
+      <div class="step rv"><h3 data-i18n="how.s3h">It clicks</h3><p data-i18n="how.s3p">Each cycle it holds the button for half the interval, releases, waits the other half, then plays the click sound, with a natural ±20% timing variation.</p></div>
+      <div class="step rv"><h3 data-i18n="how.s4h">Stay in control</h3><p data-i18n="how.s4p">Let go and it stops instantly. Disarm with the hotkey, or limit it to your game window so it never clicks anywhere else.</p></div>
+    </div>
+
+    <div class="grid" style="margin-top:22px">
+      <div class="card rv"><div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg></div><h3 data-i18n="uh.1h">Precise timing</h3><p data-i18n="uh.1p">A 1&nbsp;ms system timer keeps the rhythm of clicks and sounds even instead of drifting by ~15&nbsp;ms like most hobby clickers.</p></div>
+      <div class="card rv"><div class="ico"><svg viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="18" rx="6"/><path d="M12 3v7M6 10h12"/></svg></div><h3 data-i18n="uh.2h">Physical input only</h3><p data-i18n="uh.2p">A low-level mouse hook records only the state of the buttons and the scroll wheel, and ignores injected clicks. There is <b>no keyboard hook</b>.</p></div>
+      <div class="card rv"><div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="9" width="18" height="7" rx="2"/><path d="M8 9v7M13 9v7M18 9v7"/></svg></div><h3 data-i18n="uh.3h">Hotbar-aware</h3><p data-i18n="uh.3p">It tracks your selected slot from the number keys and the scroll wheel, and can read your key binds from Minecraft’s <code>options.txt</code> (read-only).</p></div>
+    </div>
+  </section>
+
+  <!-- ================= FEATURES ================= -->
+  <section id="features">
+    <div class="eyebrow" data-i18n="feat.eyebrow">Features</div>
+    <h2 data-i18n="feat.h2">Everything in one small window.</h2>
+    <p class="lead" data-i18n="feat.lead">A dark window with a red accent, a sidebar and six pages. No menus to dig through.</p>
+    <div class="grid">
+      <div class="card rv"><div class="ico"><svg viewBox="0 0 24 24"><path d="M5 3l14 8-6 2 3.5 6-2.5 1.5L9.5 14.5 6 19z"/></svg></div><h3><span data-i18n="f.1h">Left &amp; right clicker</span><span class="tag">1–100&nbsp;CPS</span></h3><p data-i18n="f.1p">Each side has its own hotkey and CPS, with human-like timing variation and an option to act only in your game window.</p></div>
+      <div class="card rv"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 4.5 3.2 7.7 8 9 4.8-1.3 8-4.5 8-9V6z"/></svg></div><h3 data-i18n="f.2h">Blockhit</h3><p data-i18n="f.2p">While you hold right click, it releases the block only during the hit and goes back to blocking right after.</p></div>
+      <div class="card rv"><div class="ico"><svg viewBox="0 0 24 24"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg></div><h3 data-i18n="f.3h">Jitter</h3><p data-i18n="f.3p">Tiny mouse movements on every click, undone on the next one so your aim doesn’t drift. Adjustable speed.</p></div>
+      <div class="card rv"><div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="9" width="18" height="7" rx="2"/><path d="M8 9v7M13 9v7M18 9v7"/></svg></div><h3 data-i18n="f.4h">Slot whitelist</h3><p data-i18n="f.4p">Click only on the hotbar slots you tick. <i>Fetch Binds</i> reads your slot keys from Minecraft.</p></div>
+      <div class="card rv"><div class="ico"><svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v5l-5 9a3 3 0 0 0 2.6 4.5h8.8A3 3 0 0 0 19 17l-5-9V3"/></svg></div><h3 data-i18n="f.5h">Throwpot</h3><p data-i18n="f.5p">One key: switch to the potion slot, throw, and (optionally) return to the slot you were on. Delay is configurable.</p></div>
+      <div class="card rv"><div class="ico"><svg viewBox="0 0 24 24"><path d="M4 7l4 10 4-7 4 7 4-10"/></svg></div><h3 data-i18n="f.6h">W-Tap</h3><p data-i18n="f.6p">Releases W for a few milliseconds after a hit to reset your sprint, only while autoclicking or also on manual clicks.</p></div>
+      <div class="card rv"><div class="ico"><svg viewBox="0 0 24 24"><path d="M4 10v4h4l5 4V6L8 10zM16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg></div><h3 data-i18n="f.7h">Click sounds</h3><p data-i18n="f.7p">8 built-in sounds (Default, GPro, G303, G502, HP, Microsoft, Old…) plus any <code>.wav</code> you drop in the <code>sounds</code> folder.</p></div>
+      <div class="card rv"><div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="8.5" cy="10" r="1.2"/><circle cx="12" cy="7.5" r="1.2"/><circle cx="15.5" cy="10" r="1.2"/><path d="M12 21a2.5 2.5 0 0 1 0-5h2"/></svg></div><h3 data-i18n="f.8h">Your colors</h3><p data-i18n="f.8p">Free color picker, eight presets and a Rainbow mode. Everything is saved automatically.</p></div>
+    </div>
+  </section>
+
+  <!-- ================= SCREENSHOTS ================= -->
+  <section id="screens">
+    <div class="eyebrow" data-i18n="sc.eyebrow">Screenshots</div>
+    <h2 data-i18n="sc.h2">See it before you download it.</h2>
+    <p class="lead" data-i18n="sc.lead">The real program, straight from the current version. Pick a page.</p>
+    <div class="viewer">
+      <div class="tabs" role="tablist" aria-label="Screenshots">
+        <button role="tab" aria-selected="true" data-shot="clicker" data-alt="Clicker page"><b data-i18n="sc.t1">Clicker</b><span data-i18n="sc.t1d">Left and right CPS, Auto Click, Jitter, Blockhit, Inventory and target window.</span></button>
+        <button role="tab" aria-selected="false" data-shot="macros" data-alt="Macros page"><b data-i18n="sc.t2">Macros</b><span data-i18n="sc.t2d">Slot whitelist, Throwpot and W-Tap.</span></button>
+        <button role="tab" aria-selected="false" data-shot="sounds" data-alt="Sounds page"><b data-i18n="sc.t3">Sounds</b><span data-i18n="sc.t3d">Pick one of 12 click sounds and preview it.</span></button>
+        <button role="tab" aria-selected="false" data-shot="binds" data-alt="Binds page"><b data-i18n="sc.t4">Binds</b><span data-i18n="sc.t4d">Set your arm keys and the Throwpot key.</span></button>
+        <button role="tab" aria-selected="false" data-shot="themes" data-alt="Themes page"><b data-i18n="sc.t5">Themes</b><span data-i18n="sc.t5d">Accent colors, a custom color and Rainbow.</span></button>
+        <button role="tab" aria-selected="false" data-shot="settings" data-alt="Settings page"><b data-i18n="sc.t6">Settings</b><span data-i18n="sc.t6d">Language, always on top and reset.</span></button>
+      </div>
+      <div>
+        <div class="stage">
+          <div class="win">
+            <img class="shot" id="stage-img" data-shot="clicker" src="img/ui-clicker-en.png" alt="Clicker page">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= MADE IN BRAZIL ================= -->
+  <section id="brazil">
+    <div class="br rv">
+      <svg class="flagbig" viewBox="0 0 28 20" role="img" aria-label="Brazil"><use href="#flag-br"/></svg>
+      <div class="eyebrow" style="color:var(--a3)" data-i18n="br.eyebrow">Feito no Brasil</div>
+      <h2 data-i18n="br.h2">Made by a Brazilian.</h2>
+      <p data-i18n="br.p1">GNClicker is written and maintained by <b>Gazake</b>, an independent developer from <b>Brazil</b>. It started as a personal project to build a clean, readable autoclicker. The idea was simple: make one that does exactly what it says, and nothing else.</p>
+      <p data-i18n="br.p2">Every feature was written from scratch, and the program only uses standard Windows features. If you speak Portuguese, tap the <b>PT</b> flag at the top of the page to read everything in your language.</p>
+      <div class="sig"><img src="logo.png" alt=""><div>Gazake<small data-i18n="br.sig">Independent developer · Brazil</small></div></div>
+    </div>
+  </section>
+
+  <!-- ================= TRANSPARENCY ================= -->
+  <section id="trust">
+    <div class="eyebrow" data-i18n="tr.eyebrow">Transparency</div>
+    <h2 data-i18n="tr.h2">Nothing hidden. Here’s the list.</h2>
+    <p class="lead" data-i18n="tr.lead">Many autoclickers do things you never asked for. GNClicker was built as the opposite.</p>
+    <div class="trust">
+      <div class="card rv">
+        <h3 data-i18n="tr.noh">What it does NOT do</h3>
+        <ul class="list no">
+          <li data-i18n="tr.n1"><b>Doesn’t touch</b> the memory of other programs</li>
+          <li data-i18n="tr.n2"><b>Doesn’t use the internet</b>: nothing is downloaded or sent</li>
+          <li data-i18n="tr.n3"><b>Doesn’t install itself</b>: no registry entries, no scheduled tasks</li>
+          <li data-i18n="tr.n4"><b>Doesn’t self-delete</b> or run hidden commands</li>
+          <li data-i18n="tr.n5"><b>Doesn’t wipe traces</b> or hide that it was used</li>
+        </ul>
+      </div>
+      <div class="card rv">
+        <h3 data-i18n="tr.yesh">What it uses</h3>
+        <ul class="list yes">
+          <li data-i18n="tr.y1"><b>mouse_event / SendInput</b> to click and press keys</li>
+          <li data-i18n="tr.y2"><b>GetAsyncKeyState</b> only for the keys you configured</li>
+          <li data-i18n="tr.y3"><b>A mouse hook</b> for button state and scroll only</li>
+          <li data-i18n="tr.y4"><b>PlaySound</b> for the click sound</li>
+          <li data-i18n="tr.y5">No keyboard hook at all</li>
+        </ul>
+      </div>
+    </div>
+    <p style="margin-top:18px"><a class="btn" href="https://github.com/Gazake1/GNClicker" rel="noopener"><span data-i18n="tr.src">Read the source code on GitHub</span></a></p>
+  </section>
+
+  <!-- ================= CODE SIGNING -->
+  <section id="signing">
+    <div class="eyebrow" data-i18n="sg.eyebrow">Code signing</div>
+    <h2 data-i18n="sg.h2">Code signing policy</h2>
+    <div class="card rv" style="max-width:760px">
+      <p style="color:var(--text);font-size:16px;margin-bottom:12px"><b>Free code signing provided by <a href="https://signpath.io" rel="noopener">SignPath.io</a>, certificate by <a href="https://signpath.org" rel="noopener">SignPath Foundation</a>.</b></p>
+      <ul class="list yes">
+        <li data-i18n="sg.status"><b>Status:</b> a free certificate is being requested. Until it is granted, releases are <b>not signed</b>, so Windows may show an “unknown publisher” warning.</li>
+        <li data-i18n="sg.roles"><b>Authors, reviewers and approvers:</b> Gazake (sole maintainer).</li>
+        <li data-i18n="sg.priv"><b>Privacy policy:</b> this program will not transfer any information to other networked systems unless specifically requested by the user or the person installing or operating it. In practice, it does not use the network at all.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= DOWNLOAD ================= -->
+  <section id="download">
+    <div class="eyebrow" data-i18n="dl.eyebrow">Download</div>
+    <h2 data-i18n="dl.h2">Free for Windows 10 &amp; 11.</h2>
+    <p class="lead" data-i18n="dl.lead">One file, no installer. Version <b class="v-ver">1.0.1</b>, updated <b class="v-date">—</b>.</p>
+    <div class="dl-grid">
+      <div class="dl main rv">
+        <h3>GNClicker.exe</h3>
+        <p data-i18n="dl.p1">The standard version. Use this one unless Minecraft runs as administrator.</p>
+        <a class="btn primary" href="https://github.com/Gazake1/GNClicker/releases/latest/download/GNClicker.exe" download><span data-i18n="dl.btn">Download</span>&nbsp;<span class="v-size">1,3 MB</span></a>
+        <div class="hash"><code id="h-normal">…</code><button class="copy" data-t="h-normal" data-i18n="dl.copy">Copy</button></div>
+      </div>
+      <div class="dl rv">
+        <h3>GNClicker-Admin.exe</h3>
+        <p data-i18n="dl.p2">Same program, but it asks for administrator rights (UAC). Needed when your game or launcher runs as admin, otherwise Windows ignores the clicks.</p>
+        <a class="btn" href="https://github.com/Gazake1/GNClicker/releases/latest/download/GNClicker-Admin.exe" download><span data-i18n="dl.btn2">Download Admin version</span></a>
+        <div class="hash"><code id="h-admin">…</code><button class="copy" data-t="h-admin" data-i18n="dl.copy">Copy</button></div>
+      </div>
+    </div>
+    <p class="note-sm" style="text-align:left;margin-top:12px"><span data-i18n="dl.verify">SHA-256 shown above. To check your download, run:</span> <code>certutil -hashfile GNClicker.exe SHA256</code></p>
+
+    <div class="install">
+      <div class="step"><h3 data-i18n="in.1h">Download</h3><p data-i18n="in.1p">Pick the normal version, or Admin if your game runs as administrator.</p></div>
+      <div class="step"><h3 data-i18n="in.2h">Open it</h3><p data-i18n="in.2p">If Windows shows the blue SmartScreen warning, click <b>More info → Run anyway</b>. It appears for new programs that aren’t digitally signed.</p></div>
+      <div class="step"><h3 data-i18n="in.3h">Pick keys &amp; CPS</h3><p data-i18n="in.3p">On the Clicker tab, click a key button, press the key you want, and set the CPS.</p></div>
+      <div class="step"><h3 data-i18n="in.4h">Play</h3><p data-i18n="in.4p">Press the arm key (default <code>R</code>), then hold your mouse button to click.</p></div>
+    </div>
+
+    <div class="note" data-i18n="dl.warn"><b>Heads-up:</b> some antivirus programs flag every autoclicker as <i>PUA/HackTool</i>, even without any malware. Also, blockhit, jitter, throwpot and W-tap are easier for anti-cheats to detect, and many Minecraft servers forbid autoclickers. Use it at your own risk and check your server’s rules.</div>
+  </section>
+
+  <!-- ================= FAQ ================= -->
+  <section id="faq">
+    <div class="eyebrow" data-i18n="faq.eyebrow">FAQ</div>
+    <h2 data-i18n="faq.h2">Questions, answered.</h2>
+    <details class="rv"><summary data-i18n="q1">Why did my antivirus warn me?</summary><p data-i18n="a1">Autoclickers send clicks on their own, and that whole category is flagged by many antivirus programs regardless of whether there is any malware. GNClicker doesn’t use the network or touch other processes, and the SHA-256 of each file is published above so you can verify what you downloaded.</p></details>
+    <details class="rv"><summary data-i18n="q2">Which version should I download?</summary><p data-i18n="a2">The normal one works in most cases. Choose <b>Admin</b> only if Minecraft (or your launcher) runs as administrator: in that case Windows ignores clicks coming from programs without admin rights.</p></details>
+    <details class="rv"><summary data-i18n="q3">Can I get banned for using it?</summary><p data-i18n="a3">Possibly. Many servers prohibit autoclickers, and options like blockhit, jitter, throwpot and W-tap are easier to detect. Read your server’s rules first and use it at your own risk.</p></details>
+    <details class="rv"><summary data-i18n="q4">Where are my settings stored?</summary><p data-i18n="a4">In <code>%APPDATA%\GNClicker\config.txt</code>. To reset everything, just delete that file.</p></details>
+    <details class="rv"><summary data-i18n="q5">How do I add my own click sounds?</summary><p data-i18n="a5">Create a folder named <code>sounds</code> next to the program and drop <code>.wav</code> files (up to 5&nbsp;MB) in it. They show up in the sound list on the Config tab.</p></details>
+    <details class="rv"><summary data-i18n="q6">Does it work on Mac or Linux?</summary><p data-i18n="a6">No. GNClicker is a Windows 10/11 program.</p></details>
+    <details class="rv"><summary data-i18n="q7">Is the program available in English?</summary><p data-i18n="a7">Yes. The program starts in English and has a Portuguese option under <b>Settings → Language</b>, just like this website.</p></details>
+    <details class="rv"><summary data-i18n="q8">Is it open source?</summary><p data-i18n="a8">Yes. GNClicker is released under the <b>MIT license</b>, the full source code is on <a href="https://github.com/Gazake1/GNClicker" rel="noopener">GitHub</a>, and the downloads are built there by GitHub Actions.</p></details>
+    <details class="rv"><summary data-i18n="q9">Is the program digitally signed?</summary><p data-i18n="a9">Not yet. A free certificate from the SignPath Foundation is being requested. Until it is granted, Windows SmartScreen may show an “unknown publisher” warning. Check the SHA-256 above, then click <b>More info → Run anyway</b>, or right-click the file → <b>Properties → Unblock</b>.</p></details>
+  </section>
+
+</div>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div class="mib"><svg viewBox="0 0 28 20"><use href="#flag-br"/></svg><span data-i18n="ft.made">Made with care in Brazil by Gazake</span></div>
+    <div><span data-i18n="ft.credit">Interface built with</span> <a href="https://github.com/ocornut/imgui" rel="noopener">Dear ImGui</a> (MIT) · <a href="https://github.com/Gazake1/GNClicker" rel="noopener" data-i18n="ft.src">Source code (MIT)</a></div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  /* ---------- release info (fallback values; refreshed from the GitHub API) ---------- */
+  var fb = { ver:"1.0.2", date:"2026-10-14T21:39:05Z", size:"1.3 MB", normal:"868a7099b385ec15e33af07354e4d3aa37d7ca8a1b7faf9eb8e8783ad6a48153", admin:"e44ef2f6fd9dbc5deb62431ad91666e186f05fca6add337b24ec1d62459422ec" };
+  function setAll(sel,v){ document.querySelectorAll(sel).forEach(function(e){ e.textContent=v; }); }
+  function setId(id,v){ var e=document.getElementById(id); if(e) e.textContent=v; }
+  var lang = "en";
+  function fmtDate(iso){ try{ return new Date(iso).toLocaleDateString(lang==="pt"?"pt-BR":"en-US",{year:"numeric",month:"short",day:"numeric"}); }catch(e){ return iso; } }
+  var rel = { iso: "2026-10-14T21:39:05Z" };
+  function paintRelease(){
+    setAll(".v-ver", fb.ver); setAll(".v-size", fb.size);
+    setAll(".v-date", rel.iso ? fmtDate(rel.iso) : fb.date);
+    setId("h-normal", fb.normal); setId("h-admin", fb.admin);
+  }
+  paintRelease();
+  fetch("https://api.github.com/repos/Gazake1/GNClicker/releases/latest")
+    .then(function(r){ return r.ok ? r.json() : Promise.reject(); })
+    .then(function(x){
+      if(x.tag_name) fb.ver = x.tag_name.replace(/^v/,"");
+      if(x.published_at) rel.iso = x.published_at;
+      var a=(x.assets||[]).filter(function(s){return s.name==="GNClicker.exe"})[0];
+      if(a) fb.size=(a.size/1048576).toFixed(1)+" MB";
+      var re=/([a-f0-9]{64})\s+(\S+\.exe)/gi, m, body=x.body||"";
+      while((m=re.exec(body))){ if(m[2]==="GNClicker.exe") fb.normal=m[1]; if(m[2]==="GNClicker-Admin.exe") fb.admin=m[1]; }
+      paintRelease();
+    }).catch(function(){});
+
+  /* ---------- copy hash ---------- */
+  var T = { en:{copy:"Copy",ok:"Copied!",manual:"Select & copy"}, pt:{copy:"Copiar",ok:"Copiado!",manual:"Selecione e copie"} };
+  document.querySelectorAll(".copy").forEach(function(b){
+    b.addEventListener("click",function(){
+      var t=document.getElementById(b.dataset.t).textContent, L=T[lang];
+      (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){
+        b.textContent=L.ok; setTimeout(function(){b.textContent=L.copy},1500);
+      }).catch(function(){ b.textContent=L.manual; });
+    });
+  });
+
+  /* ---------- screenshots viewer ---------- */
+  var stage=document.getElementById("stage-img");
+  function shotSrc(n){ return "img/ui-"+n+"-"+(lang==="pt"?"pt":"en")+".png"; }
+  document.querySelectorAll(".tabs button").forEach(function(b){
+    b.addEventListener("click",function(){
+      document.querySelectorAll(".tabs button").forEach(function(x){ x.setAttribute("aria-selected", x===b ? "true":"false"); });
+      stage.style.opacity=0;
+      setTimeout(function(){ stage.dataset.shot=b.dataset.shot; stage.src=shotSrc(b.dataset.shot); stage.alt=b.dataset.alt; stage.onload=function(){ stage.style.opacity=1; }; },140);
+    });
+  });
+
+  /* ---------- i18n: English is the page itself; Portuguese is this dictionary ---------- */
+  var PT = {
+    "doc.title":"GNClicker — O autoclicker limpo para Minecraft",
+    "doc.desc":"GNClicker é um autoclicker pequeno e rápido para Minecraft no Windows, feito no Brasil. Blockhit, jitter, throwpot, W-tap e sons de clique. Sem rede, sem persistência e sem apagar rastros.",
+    "nav.how":"Como funciona","nav.features":"Funções","nav.screens":"Imagens","nav.brazil":"Sobre","nav.download":"Baixar","nav.faq":"FAQ",
+    "hero.badge":"Feito no Brasil · criado por um desenvolvedor brasileiro",
+    "hero.h1a":"O autoclicker limpo","hero.h1b":"para Minecraft.",
+    "hero.sub":"O GNClicker clica por você na velocidade que você escolher, com blockhit, jitter, throwpot e W-tap embutidos. Pequeno, rápido e sem nada escondido: sem rede, sem persistência e sem apagar rastros.",
+    "hero.dl":"Baixar para Windows","hero.dlsub":"Grátis · um único .exe · sem instalador","hero.how":"Ver como funciona",
+    "pill.ver":"Versão","pill.upd":"Atualizado em",
+    "strip.1":"Sem acesso à rede","strip.2":"Sem persistência no seu PC","strip.3":"Sem apagar rastros nem se auto-deletar","strip.4":"Um .exe pequeno, com SHA-256 publicado",
+    "what.eyebrow":"O que é?","what.h2":"Um autoclicker que faz exatamente o que diz.",
+    "what.p1":"O GNClicker é um programa pequeno para Windows que aperta o botão do mouse por você, várias vezes, na velocidade que você escolher: de <b>1 a 100 cliques por segundo</b> (CPS). Arme com uma tecla de atalho, segure o botão do mouse e ele clica enquanto você segurar.",
+    "what.p2":"Foi pensado para <b>Minecraft</b>: entende a hotbar, o bloqueio com a espada, o arremesso de poções e o reset do sprint. Mas, no fundo, é um autoclicker limpo e configurável que funciona em qualquer janela.",
+    "what.quote":"“Eu queria um autoclicker em que eu pudesse confiar de verdade, então fiz um onde nada fica escondido: ele clica, toca um som, e só.”","what.by":"— Gazake, o desenvolvedor",
+    "how.eyebrow":"Como funciona","how.h2":"Quatro passos e é só jogar.","how.lead":"Não há nada para instalar nem configurar além de escolher uma tecla e uma velocidade.",
+    "how.s1h":"Arme","how.s1p":"Aperte sua tecla de atalho (padrão <code>R</code>) para armar cada lado. O status muda de <b>DESATIVADO</b> para <b>ARMADO</b>. Esquerdo e direito têm tecla e CPS próprios.",
+    "how.s2h":"Segure o botão","how.s2p":"Segure o botão do mouse com o qual quer clicar. O GNClicker lê o estado <b>físico</b> dos seus botões, então os cliques dele nunca o confundem.",
+    "how.s3h":"Ele clica","how.s3p":"A cada ciclo ele segura o botão por metade do intervalo, solta, espera a outra metade e toca o som do clique, com uma variação natural de ±20% no tempo.",
+    "how.s4h":"Você no controle","how.s4p":"Solte e ele para na hora. Desarme com a tecla de atalho, ou limite à janela do jogo para ele nunca clicar em outro lugar.",
+    "uh.1h":"Tempo preciso","uh.1p":"Um timer de sistema de 1&nbsp;ms mantém o ritmo dos cliques e dos sons uniforme, em vez de variar ~15&nbsp;ms como na maioria dos clickers caseiros.",
+    "uh.2h":"Só entrada física","uh.2p":"Um hook de mouse de baixo nível registra apenas o estado dos botões e do scroll, e ignora cliques injetados. <b>Não existe hook de teclado</b>.",
+    "uh.3h":"Entende a hotbar","uh.3p":"Acompanha o slot selecionado pelas teclas numéricas e pelo scroll, e pode ler suas teclas do <code>options.txt</code> do Minecraft (somente leitura).",
+    "feat.eyebrow":"Funções","feat.h2":"Tudo em uma janela pequena.","feat.lead":"Uma janela escura com destaque vermelho, barra lateral e seis páginas. Nenhum menu escondido.",
+    "f.1h":"Clicker esquerdo e direito","f.1p":"Cada lado tem sua tecla e seu CPS, com variação de tempo parecida com a humana e a opção de agir só na janela do jogo.",
+    "f.2h":"Blockhit","f.2p":"Enquanto você segura o botão direito, ele solta o bloqueio só durante o golpe e volta a bloquear logo depois.",
+    "f.3h":"Jitter","f.3p":"Pequenos movimentos de mouse a cada clique, desfeitos no clique seguinte para a mira não sair do lugar. Velocidade ajustável.",
+    "f.4h":"Whitelist de slots","f.4p":"Clique só nos slots da hotbar que você marcar. O <i>Fetch Binds</i> lê as teclas dos slots do Minecraft.",
+    "f.5h":"Throwpot","f.5p":"Uma tecla: troca para o slot da poção, arremessa e (opcionalmente) volta ao slot em que você estava. O delay é configurável.",
+    "f.6h":"W-Tap","f.6p":"Solta o W por alguns milissegundos depois de um golpe para resetar o sprint, só durante o autoclick ou também nos cliques manuais.",
+    "f.7h":"Sons de clique","f.7p":"8 sons embutidos (Default, GPro, G303, G502, HP, Microsoft, Old…) e qualquer <code>.wav</code> que você colocar na pasta <code>sounds</code>.",
+    "f.8h":"Suas cores","f.8p":"Seletor de cor livre, oito predefinições e modo Rainbow. Tudo é salvo automaticamente.",
+    "sc.eyebrow":"Imagens","sc.h2":"Veja antes de baixar.","sc.lead":"O programa de verdade, da versão atual. Escolha uma página.",
+    "sc.t1":"Clicker","sc.t1d":"CPS esquerdo e direito, Clique Automático, Jitter, Blockhit, Inventory e janela alvo.","sc.t2":"Macros","sc.t2d":"Whitelist de slots, Throwpot e W-Tap.","sc.t3":"Sons","sc.t3d":"Escolha entre 12 sons de clique e ouça a prévia.","sc.t4":"Teclas","sc.t4d":"Defina as teclas de armar e a do Throwpot.","sc.t5":"Temas","sc.t5d":"Cores de destaque, cor personalizada e Rainbow.","sc.t6":"Config.","sc.t6d":"Idioma, sempre no topo e restaurar padrões.",
+    "br.eyebrow":"Made in Brazil","br.h2":"Feito por um brasileiro.",
+    "br.p1":"O GNClicker é escrito e mantido por <b>Gazake</b>, um desenvolvedor independente do <b>Brasil</b>. Ele nasceu como um projeto pessoal para fazer um autoclicker limpo e legível. A ideia era simples: fazer um que faz exatamente o que diz, e mais nada.",
+    "br.p2":"Cada função foi escrita do zero, e o programa só usa recursos padrão do Windows. Se você fala português, toque na bandeira <b>PT</b> no topo da página para ler tudo no seu idioma.",
+    "br.sig":"Desenvolvedor independente · Brasil",
+    "tr.eyebrow":"Transparência","tr.h2":"Nada escondido. Aqui está a lista.","tr.lead":"Muitos autoclickers fazem coisas que você nunca pediu. O GNClicker foi feito para ser o oposto.",
+    "tr.noh":"O que ele NÃO faz","tr.yesh":"O que ele usa",
+    "tr.n1":"<b>Não mexe</b> na memória de outros programas","tr.n2":"<b>Não usa a internet</b>: nada é baixado nem enviado","tr.n3":"<b>Não se instala</b>: sem registro, sem tarefas agendadas","tr.n4":"<b>Não se auto-apaga</b> nem roda comandos escondidos","tr.n5":"<b>Não apaga rastros</b> nem esconde que foi usado",
+    "tr.y1":"<b>mouse_event / SendInput</b> para clicar e apertar teclas","tr.y2":"<b>GetAsyncKeyState</b> só para as teclas que você configurou","tr.y3":"<b>Um hook de mouse</b> só para estado dos botões e scroll","tr.y4":"<b>PlaySound</b> para o som do clique","tr.y5":"Nenhum hook de teclado",
+    "dl.eyebrow":"Baixar","dl.h2":"Grátis para Windows 10 e 11.","dl.lead":"Um arquivo, sem instalador. Versão <b class=\"v-ver\">1.0.1</b>, atualizada em <b class=\"v-date\">—</b>.",
+    "dl.p1":"A versão padrão. Use esta, a menos que o Minecraft rode como administrador.","dl.btn":"Baixar",
+    "dl.p2":"O mesmo programa, mas pede direitos de administrador (UAC). Necessária quando o jogo ou o launcher roda como admin, senão o Windows ignora os cliques.","dl.btn2":"Baixar versão Admin","dl.copy":"Copiar",
+    "dl.verify":"SHA-256 acima. Para conferir seu download, rode:",
+    "in.1h":"Baixe","in.1p":"Escolha a versão normal, ou a Admin se o seu jogo roda como administrador.",
+    "in.2h":"Abra","in.2p":"Se o Windows mostrar o aviso azul do SmartScreen, clique em <b>Mais informações → Executar assim mesmo</b>. Ele aparece em programas novos sem assinatura digital.",
+    "in.3h":"Escolha teclas e CPS","in.3p":"Na aba Clicker, clique no botão da tecla, aperte a tecla desejada e ajuste o CPS.",
+    "in.4h":"Jogue","in.4p":"Aperte a tecla de armar (padrão <code>R</code>) e segure o botão do mouse para clicar.",
+    "dl.warn":"<b>Atenção:</b> alguns antivírus marcam qualquer autoclicker como <i>PUA/HackTool</i>, mesmo sem malware. Além disso, blockhit, jitter, throwpot e W-tap são mais fáceis de detectar por anticheats, e muitos servidores de Minecraft proíbem autoclickers. Use por sua conta e risco e confira as regras do seu servidor.",
+    "faq.eyebrow":"FAQ","faq.h2":"Perguntas respondidas.",
+    "q1":"Por que o antivírus reclamou?","a1":"Autoclickers enviam cliques por conta própria, e essa categoria inteira é sinalizada por muitos antivírus, tenha malware ou não. O GNClicker não usa a rede nem mexe em outros processos, e o SHA-256 de cada arquivo está publicado acima para você conferir o que baixou.",
+    "q2":"Qual versão eu baixo?","a2":"A normal funciona na maioria dos casos. Escolha a <b>Admin</b> só se o Minecraft (ou o launcher) roda como administrador: nesse caso o Windows ignora cliques de programas sem privilégio de admin.",
+    "q3":"Posso ser banido por usar?","a3":"É possível. Muitos servidores proíbem autoclickers, e opções como blockhit, jitter, throwpot e W-tap são mais fáceis de detectar. Leia as regras do seu servidor antes e use por sua conta e risco.",
+    "q4":"Onde ficam minhas configurações?","a4":"Em <code>%APPDATA%\\GNClicker\\config.txt</code>. Para zerar tudo, apague esse arquivo.",
+    "q5":"Como coloco meus próprios sons de clique?","a5":"Crie uma pasta chamada <code>sounds</code> ao lado do programa e coloque arquivos <code>.wav</code> (até 5&nbsp;MB). Eles aparecem na lista de sons da aba Config.",
+    "q6":"Funciona no Mac ou Linux?","a6":"Não. O GNClicker é um programa para Windows 10/11.",
+    "q7":"O programa tem versão em inglês?","a7":"Sim. O programa abre em inglês e tem a opção de português em <b>Settings → Idioma</b>, igual a este site.",
+    "pill.os":"Código aberto · MIT","tr.src":"Ver o código-fonte no GitHub","sg.eyebrow":"Assinatura de código","sg.h2":"Política de assinatura de código","sg.status":"<b>Situação:</b> um certificado gratuito está sendo solicitado. Enquanto não for concedido, as versões <b>não são assinadas</b>, então o Windows pode mostrar o aviso de “fornecedor desconhecido”.","sg.roles":"<b>Autores, revisores e aprovadores:</b> Gazake (único mantenedor).","sg.priv":"<b>Política de privacidade:</b> este programa não transfere nenhuma informação para outros sistemas em rede, a menos que o usuário ou quem o instala ou opera peça. Na prática, ele não usa a rede.","q8":"É código aberto?","a8":"Sim. O GNClicker usa a <b>licença MIT</b>, o código-fonte completo está no <a href=\"https://github.com/Gazake1/GNClicker\" rel=\"noopener\">GitHub</a> e os downloads são compilados lá pelo GitHub Actions.","q9":"O programa tem assinatura digital?","a9":"Ainda não. Um certificado gratuito da SignPath Foundation está sendo solicitado. Até ser concedido, o SmartScreen do Windows pode mostrar o aviso de “fornecedor desconhecido”. Confira o SHA-256 acima e clique em <b>Mais informações → Executar assim mesmo</b>, ou clique com o botão direito no arquivo → <b>Propriedades → Desbloquear</b>.","ft.made":"Feito com carinho no Brasil por Gazake","ft.credit":"Interface feita com","ft.src":"Código-fonte (MIT)"
+  };
+
+  var els = document.querySelectorAll("[data-i18n]");
+  els.forEach(function(e){ e.dataset.en = e.innerHTML; });
+  var titleEn = document.title, descEl = document.querySelector('meta[name="description"]'), descEn = descEl.getAttribute("content");
+
+  function setLang(l, persist){
+    lang = l;
+    document.querySelectorAll("img[data-shot]").forEach(function(i){ i.src = shotSrc(i.dataset.shot); });
+    document.documentElement.lang = (l==="pt" ? "pt-BR" : "en");
+    els.forEach(function(e){ var k=e.dataset.i18n; e.innerHTML = (l==="pt" && PT[k]) ? PT[k] : e.dataset.en; });
+    document.title = l==="pt" ? PT["doc.title"] : titleEn;
+    descEl.setAttribute("content", l==="pt" ? PT["doc.desc"] : descEn);
+    document.querySelectorAll(".lang button").forEach(function(b){ b.setAttribute("aria-pressed", b.dataset.lang===l ? "true":"false"); });
+    document.querySelectorAll(".copy").forEach(function(b){ b.textContent = T[l].copy; });
+    paintRelease();
+    if(persist){ try{ localStorage.setItem("gn-lang", l); }catch(e){} }
+  }
+  document.querySelectorAll(".lang button").forEach(function(b){ b.addEventListener("click", function(){ setLang(b.dataset.lang, true); }); });
+
+  var start = "en";
+  try{ var q = new URLSearchParams(location.search).get("lang"); if(q==="pt"||q==="en") start=q; else { var s=localStorage.getItem("gn-lang"); if(s==="pt"||s==="en") start=s; } }catch(e){}
+  if(start!=="en") setLang(start,false);
+
+  /* ---------- reveal on scroll ---------- */
+  var rv = document.querySelectorAll(".rv");
+  if("IntersectionObserver" in window){
+    var io = new IntersectionObserver(function(en){ en.forEach(function(x){ if(x.isIntersecting){ x.target.classList.add("in"); io.unobserve(x.target); } }); },{threshold:.12});
+    rv.forEach(function(e){ io.observe(e); });
+  } else rv.forEach(function(e){ e.classList.add("in"); });
+})();
+</script>
+</body>
+</html>
