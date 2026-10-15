@@ -329,7 +329,7 @@
     <p class="lead" data-i18n="sc.lead">The real program, straight from the current version. Pick a page.</p>
     <div class="viewer">
       <div class="tabs" role="tablist" aria-label="Screenshots">
-        <button role="tab" aria-selected="true" data-shot="clicker" data-alt="Clicker page"><b data-i18n="sc.t1">Clicker</b><span data-i18n="sc.t1d">Left and right CPS, Auto Click, Jitter, Inventory and target window.</span></button>
+        <button role="tab" aria-selected="true" data-shot="clicker" data-alt="Clicker page"><b data-i18n="sc.t1">Clicker</b><span data-i18n="sc.t1d">Separate settings for left and right: CPS, Auto Click, Inventory, sound and target window. Jitter on the left.</span></button>
         <button role="tab" aria-selected="false" data-shot="macros" data-alt="Macros page"><b data-i18n="sc.t2">Macros</b><span data-i18n="sc.t2d">Slot whitelist, Throwpot and W-Tap.</span></button>
         <button role="tab" aria-selected="false" data-shot="sounds" data-alt="Sounds page"><b data-i18n="sc.t3">Sounds</b><span data-i18n="sc.t3d">Pick one of 12 click sounds and preview it.</span></button>
         <button role="tab" aria-selected="false" data-shot="binds" data-alt="Binds page"><b data-i18n="sc.t4">Binds</b><span data-i18n="sc.t4d">Set your arm keys and the Throwpot key.</span></button>
@@ -464,12 +464,12 @@
 <script>
 (function(){
   /* ---------- release info (fallback values; refreshed from the GitHub API) ---------- */
-  var fb = { ver:"1.1.1", date:"2026-10-15T00:53:19Z", size:"1.4 MB", normal:"6f3a57441316dc7dcb0d069e254f62cea780e86560f7eef254e264f9da5734dd", admin:"c936cfaa63055384eb069f7c73c32840e2b794eb84562829d9f67aff3b3f8ae2" };
+  var fb = { ver:"1.2.0", date:"2026-10-15T01:33:00Z", size:"1.4 MB", normal:"2b5623a829042c319db4dfc7ea88f8f8b57b0d7c653374685992f28de1f6d264", admin:"0143b157b7b891feb7a94a6c4076d655ed837c72c5b7d995c1b91aa24d8fdcb0" };
   function setAll(sel,v){ document.querySelectorAll(sel).forEach(function(e){ e.textContent=v; }); }
   function setId(id,v){ var e=document.getElementById(id); if(e) e.textContent=v; }
   var lang = "en";
   function fmtDate(iso){ try{ return new Date(iso).toLocaleDateString(lang==="pt"?"pt-BR":"en-US",{year:"numeric",month:"short",day:"numeric"}); }catch(e){ return iso; } }
-  var rel = { iso: "2026-10-15T00:53:19Z" };
+  var rel = { iso: "2026-10-15T01:33:00Z" };
   function paintRelease(){
     setAll(".v-ver", fb.ver); setAll(".v-size", fb.size);
     setAll(".v-date", rel.iso ? fmtDate(rel.iso) : fb.date);
@@ -543,7 +543,7 @@
     "f.7h":"Sons de clique","f.7p":"8 sons embutidos (Default, GPro, G303, G502, HP, Microsoft, Old…) e qualquer <code>.wav</code> que você colocar na pasta <code>sounds</code>.",
     "f.8h":"Suas cores","f.8p":"Seletor de cor livre, oito predefinições e modo Rainbow. Tudo é salvo automaticamente.",
     "sc.eyebrow":"Imagens","sc.h2":"Veja antes de baixar.","sc.lead":"O programa de verdade, da versão atual. Escolha uma página.",
-    "sc.t1":"Clicker","sc.t1d":"CPS esquerdo e direito, Clique Automático, Jitter, Inventory e janela alvo.","sc.t2":"Macros","sc.t2d":"Whitelist de slots, Throwpot e W-Tap.","sc.t3":"Sons","sc.t3d":"Escolha entre 12 sons de clique e ouça a prévia.","sc.t4":"Teclas","sc.t4d":"Defina as teclas de armar e a do Throwpot.","sc.t5":"Temas","sc.t5d":"Cores de destaque, cor personalizada e Rainbow.","sc.t6":"Config.","sc.t6d":"Idioma, sempre no topo e restaurar padrões.",
+    "sc.t1":"Clicker","sc.t1d":"Configurações separadas para esquerdo e direito: CPS, Clique Automático, Inventory, som e janela alvo. Jitter no esquerdo.","sc.t2":"Macros","sc.t2d":"Whitelist de slots, Throwpot e W-Tap.","sc.t3":"Sons","sc.t3d":"Escolha entre 12 sons de clique e ouça a prévia.","sc.t4":"Teclas","sc.t4d":"Defina as teclas de armar e a do Throwpot.","sc.t5":"Temas","sc.t5d":"Cores de destaque, cor personalizada e Rainbow.","sc.t6":"Config.","sc.t6d":"Idioma, sempre no topo e restaurar padrões.",
     "br.eyebrow":"Made in Brazil","br.h2":"Feito por um brasileiro.",
     "br.p1":"O Akaze é escrito e mantido por <b>Gazake</b>, um desenvolvedor independente do <b>Brasil</b>. Ele nasceu como um projeto pessoal para fazer um autoclicker limpo e legível. A ideia era simples: fazer um que faz exatamente o que diz, e mais nada.",
     "br.p2":"Cada função foi escrita do zero, e o programa só usa recursos padrão do Windows. Se você fala português, toque na bandeira <b>PT</b> no topo da página para ler tudo no seu idioma.",
